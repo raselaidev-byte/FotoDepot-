@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FotoDepot | Pro Image Hosting</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/rRCS0M0b/1770980152608.png">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* =========================================
+           STABLE CYBERPUNK UI (WITH CUSTOM LOGO)
+           ========================================= */
+        :root {
+            --primary: #00f2fe;
+            --primary-dark: #4facfe;
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #0b1120;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background-color: var(--bg-body);
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg-body) 70%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 100px; /* Space for RGB button */
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 5%;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        /* LOGO STYLING */
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .app-logo {
+            height: 45px; /* Perfect size for header */
+            width: auto;
+            filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.6)); /* Neon Glow */
+            transition: transform 0.3s ease;
+        }
+
+        .app-logo:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .brand-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+        }
+
+        /* Header Button */
+        .header-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header-btn:hover { border-color: #ef4444; color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+
+        /* MAIN CONTAINER */
+        main {
+            flex: 1;
+            max-width: 800px;
+            width: 95%;
+            margin: 30px auto;
+        }
+
+        /* UPLOAD SECTION */
+        .upload-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 3rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: var(--primary);
+            background: rgba(0, 242, 254, 0.05);
+            transform: scale(1.01);
+        }
+
+        .drop-zone i { font-size: 3rem; color: var(--primary); margin-bottom: 15px; }
+        .drop-zone h3 { font-size: 1.2rem; margin-bottom: 5px; color: #fff; }
+        .drop-zone p { color: var(--text-muted); font-size: 0.9rem; }
+        
+        /* PREVIEW AREA */
+        .preview-area {
+            display: none;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            animation: fadeIn 0.4s;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: #000;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .upload-btn:hover { transform: translateY(-3px); box-shadow: 0 0 25px rgba(0, 242, 254, 0.6); }
+        .upload-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        /* RESULTS CARD */
+        .results-container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 15px;
+        }
+
+        .thumb {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+        }
+
+        .info h4 { font-size: 1rem; color: #fff; margin-bottom: 3px; }
+        .info p { font-size: 0.8rem; color: var(--text-muted); }
+        .badge { 
+            display: inline-block; 
+            background: rgba(16, 185, 129, 0.15); 
+            color: var(--success); 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-size: 0.75rem; 
+            margin-top: 5px; 
+        }
+
+        /* LINK INPUTS (Clean Vertical Layout) */
+        .link-row {
+            margin-bottom: 12px;
+        }
+
+        .link-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            display: flex;
+            position: relative;
+        }
+
+        .link-input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: #e2e8f0;
+            padding: 10px 45px 10px 12px; /* Space for icon */
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.2s;
+            text-overflow: ellipsis;
+        }
+
+        .link-input:focus { border-color: var(--primary); background: #0f172a; }
+
+        .copy-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .copy-btn:hover { color: #fff; }
+
+        /* RGB BUTTON (Fixed Bottom) */
+        .rgb-wrapper {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 500;
+            pointer-events: none;
+        }
+
+        .rgb-btn {
+            pointer-events: auto;
+            text-decoration: none;
+            color: white;
+            font-weight: 800;
+            padding: 14px 40px;
+            border-radius: 50px;
+            border: 2px solid #fff;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            background-size: 400%;
+            animation: glowing 10s linear infinite;
+            box-shadow: 0 0 25px rgba(0,0,0,0.7);
+            display: flex; align-items: center; gap: 10px;
+            transition: transform 0.2s;
+            font-size: 1rem;
+        }
+        .rgb-btn:hover { transform: scale(1.05); }
+
+        /* TOAST NOTIFICATION */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--bg-card);
+            border: 1px solid var(--success);
+            color: var(--success);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            transition: transform 0.4s ease;
+            z-index: 2000;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* KEYFRAMES */
+        @keyframes glowing { 0% { background-position: 0 0; } 50% { background-position: 400% 0; } 100% { background-position: 0 0; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* MOBILE RESPONSIVE TWEAKS */
+        @media (max-width: 600px) {
+            .brand-text { display: none; } /* Show only logo on very small screens */
+            .card-header { flex-direction: column; text-align: center; }
+            .upload-container { padding: 1.5rem; }
+            .rgb-btn { width: 90%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NOTIFICATION -->
+    <div id="toast" class="toast"><i class="fa-solid fa-check"></i> <span>Success</span></div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="brand-container">
+            <!-- YOUR LOGO HERE -->
+            <img src="https://i.ibb.co/rRCS0M0b/1770980152608.png" alt="FotoDepot" class="app-logo">
+            <span class="brand-text">FotoDepot</span>
+        </div>
+        <button class="header-btn" onclick="clearHistory()">
+            <i class="fa-solid fa-trash-can"></i> <span style="font-size:0.9rem;">Clear History</span>
+        </button>
+    </header>
+
+    <!-- MAIN APP -->
+    <main>
+        <div class="upload-container">
+            <div class="drop-zone" id="drop-zone">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <h3>Click to Browse or Drag File</h3>
+                <p>Paste (Ctrl+V) also supported</p>
+                <input type="file" id="file-input" hidden accept="image/*">
+            </div>
+
+            <!-- Preview -->
+            <div id="preview-area" class="preview-area">
+                <img id="preview-img" class="preview-img" src="">
+                <br>
+                <button id="upload-btn" class="upload-btn">
+                    <i class="fa-solid fa-bolt"></i> Upload Now
+                </button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results-container" class="results-container"></div>
+    </main>
+
+    <!-- RGB BUTTON -->
+    <div class="rgb-wrapper">
+        <a href="https://t.me/+DeY-WNknrd00ZWU9" target="_blank" class="rgb-btn">
+            <i class="fa-brands fa-telegram"></i> JOIN OUR TG GROUP
+        </a>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // CONFIG
+        const API_KEY = 'e726a371a69abb1842875dc400cf8110';
+        const API_URL = 'https://api.imgbb.com/1/upload';
+
+        // DOM Elements
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const previewArea = document.getElementById('preview-area');
+        const previewImg = document.getElementById('preview-img');
+        const uploadBtn = document.getElementById('upload-btn');
+        const resultsContainer = document.getElementById('results-container');
+        const toast = document.getElementById('toast');
+
+        let selectedFile = null;
+
+        // --- 1. INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', loadHistory);
+
+        // --- 2. FILE HANDLING ---
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // Drag & Drop
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        // Paste Support
+        document.addEventListener('paste', (e) => {
+            const items = e.clipboardData.items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    handleFile(items[i].getAsFile());
+                    showToast('Image pasted!');
+                }
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+        function handleFile(file) {
+            if (file && file.type.match('image.*')) {
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImg.src = e.target.result;
+                    previewArea.style.display = 'block';
+                    dropZone.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("Please select a valid image!");
+            }
+        }
+
+        // --- 3. UPLOAD LOGIC ---
+        uploadBtn.addEventListener('click', () => {
+            if (!selectedFile) return;
+
+            uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+            uploadBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+
+            fetch(`${API_URL}?key=${API_KEY}`, { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    addResultCard(data.data, true); // Save to history
+                    resetUI();
+                    showToast('Upload Successful!');
+                } else {
+                    alert('Error: ' + (data.error ? data.error.message : 'Unknown'));
+                    resetUI(false);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Network Error');
+                resetUI(false);
+            });
+        });
+
+        function resetUI(success = true) {
+            uploadBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Upload Now';
+            uploadBtn.disabled = false;
+            selectedFile = null;
+            fileInput.value = '';
+            
+            if (success) {
+                previewArea.style.display = 'none';
+                dropZone.style.display = 'block';
+            }
+        }
+
+        // --- 4. RENDER RESULTS & LINKS ---
+        function addResultCard(data, save = false) {
+            // Define all link types
+            const links = [
+                { label: 'Direct Link', val: data.url },
+                { label: 'HTML Code', val: `<img src="${data.url}" alt="image" border="0">` },
+                { label: 'BBCode', val: `[img]${data.url}[/img]` },
+                { label: 'Markdown', val: `![image](${data.url})` },
+                { label: 'Thumbnail URL', val: data.thumb.url }
+            ];
+
+            const card = document.createElement('div');
+            card.className = 'result-card';
+
+            // Generate HTML for input rows
+            let linksHtml = '';
+            links.forEach(link => {
+                linksHtml += `
+                <div class="link-row">
+                    <span class="link-label">${link.label}</span>
+                    <div class="input-group">
+                        <input class="link-input" value="${link.val.replace(/"/g, '&quot;')}" readonly onclick="copyToClipboard(this)">
+                        <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
+                </div>`;
+            });
+
+            // Card Structure
+            card.innerHTML = `
+                <div class="card-header">
+                    <img src="${data.thumb.url}" class="thumb">
+                    <div class="info">
+                        <h4>${data.title || 'Untitled Image'}</h4>
+                        <div class="badge">Success</div>
+                        <p>${(data.size / 1024).toFixed(1)} KB • ${data.width}x${data.height}</p>
+                    </div>
+                </div>
+                <div class="links-wrapper">
+                    ${linksHtml}
+                </div>
+            `;
+
+            resultsContainer.prepend(card);
+
+            if (save) saveToHistory(data);
+        }
+
+        function copyToClipboard(input) {
+            input.select();
+            input.setSelectionRange(0, 99999); // Mobile
+            document.execCommand('copy');
+            
+            // Visual Feedback
+            const btn = input.nextElementSibling;
+            const icon = btn.querySelector('i');
+            
+            input.style.borderColor = '#10b981';
+            icon.classList.remove('fa-copy');
+            icon.classList.add('fa-check');
+            icon.style.color = '#10b981';
+
+            showToast('Copied to Clipboard!');
+
+            setTimeout(() => {
+                input.style.borderColor = '#334155';
+                icon.classList.add('fa-copy');
+                icon.classList.remove('fa-check');
+                icon.style.color = '#94a3b8';
+            }, 1500);
+        }
+
+        function showToast(msg) {
+            toast.querySelector('span').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // --- 5. HISTORY MANAGEMENT ---
+        function saveToHistory(data) {
+            let history = JSON.parse(localStorage.getItem('fotoHistory')) || [];
+            history.push(data);
+            if (history.length > 5) history.shift(); // Keep last 5
+            localStorage.setItem('fotoHistory', JSON.stringify(history));
+        }
+
+        function loadHistory() {
+            let history = JSON.parse(localStorage.getItem('fotoHistory')) || [];
+            // Render in reverse order so newest is first
+            history.forEach(data => addResultCard(data, false));
+        }
+
+        function clearHistory() {
+            if (confirm('Clear local history?')) {
+                localStorage.removeItem('fotoHistory');
+                resultsContainer.innerHTML = '';
+                showToast('History Cleared');
+            }
+        }
+    </script>
+</body>
+</html>
